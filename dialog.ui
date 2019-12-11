@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Dialog</class>
+ <widget class="QDialog" name="Dialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>434</width>
+    <height>502</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <widget class="QTabWidget" name="tabWidget">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>411</width>
+     <height>411</height>
+    </rect>
+   </property>
+   <property name="currentIndex">
+    <number>0</number>
+   </property>
+   <widget class="QWidget" name="General">
+    <attribute name="title">
+     <string>Tab 1</string>
+    </attribute>
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>20</y>
+       <width>381</width>
+       <height>241</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>server</string>
+     </property>
+     <widget class="QLabel" name="intervalInfo">
+      <property name="geometry">
+       <rect>
+        <x>33</x>
+        <y>68</y>
+        <width>108</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>采样间隔（毫秒）：</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="portInfo">
+      <property name="geometry">
+       <rect>
+        <x>33</x>
+        <y>42</y>
+        <width>60</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>监听端口：</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="intervalInfo_2">
+      <property name="geometry">
+       <rect>
+        <x>33</x>
+        <y>94</y>
+        <width>60</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>BFM Model:</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="BFMModel">
+      <property name="geometry">
+       <rect>
+        <x>147</x>
+        <y>94</y>
+        <width>133</width>
+        <height>20</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="BFMKeyIndexes">
+      <property name="geometry">
+       <rect>
+        <x>147</x>
+        <y>120</y>
+        <width>133</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="intervalInfo_3">
+      <property name="geometry">
+       <rect>
+        <x>33</x>
+        <y>120</y>
+        <width>96</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>BFM Key Indexes:</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="G8M2BFM">
+      <property name="geometry">
+       <rect>
+        <x>147</x>
+        <y>172</y>
+        <width>133</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="BFM2G8M">
+      <property name="geometry">
+       <rect>
+        <x>147</x>
+        <y>146</y>
+        <width>133</width>
+        <height>20</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="intervalInfo_4">
+      <property name="geometry">
+       <rect>
+        <x>33</x>
+        <y>146</y>
+        <width>54</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>BFM-&gt;G8M:</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="intervalInfo_5">
+      <property name="geometry">
+       <rect>
+        <x>33</x>
+        <y>172</y>
+        <width>54</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>G8M-&gt;BFM:</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="DlibModel">
+      <property name="geometry">
+       <rect>
+        <x>147</x>
+        <y>198</y>
+        <width>133</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="intervalInfo_6">
+      <property name="geometry">
+       <rect>
+        <x>33</x>
+        <y>198</y>
+        <width>66</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Dlib Model:</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="port">
+      <property name="geometry">
+       <rect>
+        <x>147</x>
+        <y>42</y>
+        <width>133</width>
+        <height>20</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="interval">
+      <property name="geometry">
+       <rect>
+        <x>147</x>
+        <y>68</y>
+        <width>133</width>
+        <height>20</height>
+       </rect>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QGroupBox" name="groupBox">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>270</y>
+       <width>381</width>
+       <height>111</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>camera</string>
+     </property>
+     <widget class="QLabel" name="portInfo_3">
+      <property name="geometry">
+       <rect>
+        <x>34</x>
+        <y>31</y>
+        <width>84</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>分辨率（宽）：</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="portInfo_4">
+      <property name="geometry">
+       <rect>
+        <x>34</x>
+        <y>57</y>
+        <width>84</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>分辨率（高）：</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="width">
+      <property name="geometry">
+       <rect>
+        <x>124</x>
+        <y>31</y>
+        <width>133</width>
+        <height>20</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="height">
+      <property name="geometry">
+       <rect>
+        <x>124</x>
+        <y>57</y>
+        <width>133</width>
+        <height>20</height>
+       </rect>
+      </property>
+     </widget>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="tab_2">
+    <attribute name="title">
+     <string>Tab 2</string>
+    </attribute>
+   </widget>
+  </widget>
+  <widget class="QWidget" name="layoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>460</y>
+     <width>381</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <item>
+     <widget class="QPushButton" name="reset">
+      <property name="text">
+       <string>Reset</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <spacer name="horizontalSpacer">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item>
+     <widget class="QPushButton" name="cancel">
+      <property name="text">
+       <string>Cancel</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="save">
+      <property name="text">
+       <string>Save</string>
+      </property>
+      <property name="default">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="layoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>2</width>
+     <height>2</height>
+    </rect>
+   </property>
+   <layout class="QGridLayout" name="gridLayout"/>
+  </widget>
+  <widget class="QWidget" name="layoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>2</width>
+     <height>2</height>
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout"/>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
