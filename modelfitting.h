@@ -11,7 +11,8 @@ public:
 
     ModelFitting();
     static void loadKeyIndex(std::string keyPath,std::vector<int>& keys);
-    static void extractKeyModel(const FaceModel &BFMModel,std::vector<int>& indexes,FaceModel& keyModel);
+    static void extractBFMKeyModel(const FaceModel &BFMModel,std::vector<int>& indexes,FaceModel& keyModel);
+    static void extractG8MKeyModel(const FaceModel &BFMModel,std::vector<int>& indexes,FaceModel& keyModel);
     static void extractKeyShape(const MatF &SB,std::vector<int>& indexes,MatF& keySB);
     static void extractKeyFace(const MatF Face,std::vector<int>& indexes,MatF& keyFace);
     static void extractKeyPoints(const Eigen::Matrix3Xf &points,std::vector<int>& indexes,Eigen::Matrix3Xf& out);
@@ -25,8 +26,8 @@ public:
 
     static std::map<int,int> makeKeymap(std::vector<int> srcIndexes,std::vector<int> dstIndexes);
     static void subKey(const std::map<int,int>& keyMap,std::vector<int> &ids);
-    static void fittingShape(const MatF&KP, MMSolver& solver);
-    static void fittingExpression(const MatF&KP, MMSolver& solver);
+    static void fittingShape(const MatF&KP, MMSolver& solver,bool center=false);
+    static void fittingExpression(const MatF&KP, MMSolver& solver,bool center=false);
 };
 }
 

@@ -60,7 +60,7 @@ void MainWindow::closeWorkingThread(WorkingThread **t)
     (*t)->requestInterruption();
     (*t)->quit();
     (*t)->requestInterruption();
-    //(*t)->wait();
+    (*t)->wait();
     QThread::msleep(1);
     (*t)->deleteLater();
     (*t)=nullptr;
@@ -93,14 +93,28 @@ MainWindow::MainWindow(QWidget *parent) :
     BFMModel.Initialize(sets.getBFMModel().toStdString(),true);
     std::vector<int> keys;
     fitting::ModelFitting::loadKeyIndex(sets.getBFMKeyIndexes().toStdString(),keys);
-    fitting::ModelFitting::extractKeyModel(BFMModel,keys,keyBFMModel);
+    fitting::ModelFitting::extractBFMKeyModel(BFMModel,keys,keyBFMModel);
     MMSolver solver;
     solver.FM=keyBFMModel;
     solver.FMFull=BFMModel;
     solverPtr=std::make_shared<MMSolver>(solver);
-    //connect(leftZedCameraThread,&ZedCameraThread::returnQPixmap,this,&MainWindow::showLeft);
+    std::cout << "load BFM done!" << std::endl<<std::flush;
+
+    FaceModel shape;
+    shape.Initialize(sets.getG8MModel().toStdString(),true);
+    FaceModel keyShape;
+    std::vector<int> g8Mkeys;
+    fitting::ModelFitting::loadKeyIndex(sets.getG8MKeyIndexes().toStdString(),g8Mkeys);
+    fitting::ModelFitting::extractG8MKeyModel(shape,g8Mkeys,keyShape);
+    MMSolver g8mSolver;
+    g8mSolver.FM=keyShape;
+    g8mSolver.FMFull=shape;
+    g8mSolverPtr=std::make_shared<MMSolver>(g8mSolver);
+    std::cout << "load G8M done!" << std::endl<<std::flush;
     sendThread=nullptr;
     workThread=nullptr;
+    ui->actionBFM->setChecked(true);
+    center=true;
 }
 
 MainWindow::~MainWindow()
@@ -114,12 +128,19 @@ void MainWindow::showImage()
     dataQueue->WaitAndPop(image);
     cv::Mat leftTmp;
     std::vector<cv::Point> landMarks = KeypointDetectgion(image);
+    int rows=image.rows;
+    int cols=image.cols;
     bool success=landMarks.size()>0;
     if(success){
         //std::cout << landMarks.size() << std::endl<<std::flush;
         drawLandmarks(image,landMarks);
         if(sendQueue&&sendThread&&sendThread->getState()==WorkingThread::WorkingState::RUNNING){
-           sendQueue->WaitAndPush(ToEigen(landMarks));
+            MatF KP=ToEigen(landMarks);//Nx2
+            if(center){
+                KP.col(0).array()-=sets.getWidth()/2;
+                KP.col(1).array()-=sets.getHeight()/2;
+            }
+            sendQueue->TryPush(KP);
         }
     }
     cv::cvtColor(image,leftTmp,CV_BGR2RGB);
@@ -203,9 +224,17 @@ void MainWindow::on_start_clicked()
     ui->start->setFocus();
     ui->start->setDisabled(true);
     sendQueue=std::shared_ptr<ThreadSafeQueue<MatF>>(new ThreadSafeQueue<MatF>());
-    sendThread=new UdpWorkThread(solverPtr,sendQueue);
+    sendThread=new UdpWorkThread(solverPtr,g8mSolverPtr,sendQueue);
+    if(ui->actionBFM->isChecked()){
+        sendThread->setSendMode(UdpWorkThread::SendMode::BFM);
+    }else{
+        sendThread->setSendMode(UdpWorkThread::SendMode::G8M);
+    }
+    sendThread->setCenter(center);
     sendThread->start();
     ui->textBrowser->append( QString("start an sendThread!"));
+    ui->horizontalSlider->setValue(sendThread->getLambda());
+    connect(ui->horizontalSlider,SIGNAL(valueChanged(int)),sendThread,SLOT(setLambda(int)));
 }
 
 void MainWindow::on_pause_clicked()
@@ -236,5 +265,23 @@ void MainWindow::on_stop_clicked()
         ui->textBrowser->append( QString("stop the sendThread!"));
         ui->start->setDisabled(false);
         ui->stop->setDisabled(false);
+    }
+}
+
+void MainWindow::on_actionBFM_triggered()
+{
+    ui->actionBFM->setChecked(true);
+    ui->actionG8M->setChecked(false);
+    if(sendThread){
+        sendThread->setSendMode(UdpWorkThread::SendMode::BFM);
+    }
+}
+
+void MainWindow::on_actionG8M_triggered()
+{
+    ui->actionBFM->setChecked(false);
+    ui->actionG8M->setChecked(true);
+    if(sendThread){
+        sendThread->setSendMode(UdpWorkThread::SendMode::G8M);
     }
 }

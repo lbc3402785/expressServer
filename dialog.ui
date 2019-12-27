@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>434</width>
-    <height>502</height>
+    <height>520</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,7 +19,7 @@
      <x>10</x>
      <y>10</y>
      <width>411</width>
-     <height>411</height>
+     <height>461</height>
     </rect>
    </property>
    <property name="currentIndex">
@@ -35,7 +35,7 @@
        <x>10</x>
        <y>20</y>
        <width>381</width>
-       <height>241</height>
+       <height>291</height>
       </rect>
      </property>
      <property name="title">
@@ -44,8 +44,8 @@
      <widget class="QLabel" name="intervalInfo">
       <property name="geometry">
        <rect>
-        <x>33</x>
-        <y>68</y>
+        <x>27</x>
+        <y>50</y>
         <width>108</width>
         <height>16</height>
        </rect>
@@ -57,8 +57,8 @@
      <widget class="QLabel" name="portInfo">
       <property name="geometry">
        <rect>
-        <x>33</x>
-        <y>42</y>
+        <x>27</x>
+        <y>24</y>
         <width>60</width>
         <height>16</height>
        </rect>
@@ -70,8 +70,8 @@
      <widget class="QLabel" name="intervalInfo_2">
       <property name="geometry">
        <rect>
-        <x>33</x>
-        <y>94</y>
+        <x>27</x>
+        <y>76</y>
         <width>60</width>
         <height>16</height>
        </rect>
@@ -83,8 +83,8 @@
      <widget class="QLineEdit" name="BFMModel">
       <property name="geometry">
        <rect>
-        <x>147</x>
-        <y>94</y>
+        <x>141</x>
+        <y>76</y>
         <width>133</width>
         <height>20</height>
        </rect>
@@ -93,8 +93,8 @@
      <widget class="QLineEdit" name="BFMKeyIndexes">
       <property name="geometry">
        <rect>
-        <x>147</x>
-        <y>120</y>
+        <x>141</x>
+        <y>128</y>
         <width>133</width>
         <height>20</height>
        </rect>
@@ -106,8 +106,8 @@
      <widget class="QLabel" name="intervalInfo_3">
       <property name="geometry">
        <rect>
-        <x>33</x>
-        <y>120</y>
+        <x>27</x>
+        <y>128</y>
         <width>96</width>
         <height>16</height>
        </rect>
@@ -119,8 +119,8 @@
      <widget class="QLineEdit" name="G8M2BFM">
       <property name="geometry">
        <rect>
-        <x>147</x>
-        <y>172</y>
+        <x>141</x>
+        <y>206</y>
         <width>133</width>
         <height>20</height>
        </rect>
@@ -132,8 +132,8 @@
      <widget class="QLineEdit" name="BFM2G8M">
       <property name="geometry">
        <rect>
-        <x>147</x>
-        <y>146</y>
+        <x>141</x>
+        <y>180</y>
         <width>133</width>
         <height>20</height>
        </rect>
@@ -142,8 +142,8 @@
      <widget class="QLabel" name="intervalInfo_4">
       <property name="geometry">
        <rect>
-        <x>33</x>
-        <y>146</y>
+        <x>27</x>
+        <y>180</y>
         <width>54</width>
         <height>16</height>
        </rect>
@@ -155,8 +155,8 @@
      <widget class="QLabel" name="intervalInfo_5">
       <property name="geometry">
        <rect>
-        <x>33</x>
-        <y>172</y>
+        <x>27</x>
+        <y>206</y>
         <width>54</width>
         <height>16</height>
        </rect>
@@ -165,11 +165,11 @@
        <string>G8M-&gt;BFM:</string>
       </property>
      </widget>
-     <widget class="QLineEdit" name="DlibModel">
+     <widget class="QLineEdit" name="SelectEB">
       <property name="geometry">
        <rect>
-        <x>147</x>
-        <y>198</y>
+        <x>141</x>
+        <y>232</y>
         <width>133</width>
         <height>20</height>
        </rect>
@@ -181,21 +181,21 @@
      <widget class="QLabel" name="intervalInfo_6">
       <property name="geometry">
        <rect>
-        <x>33</x>
-        <y>198</y>
-        <width>66</width>
+        <x>27</x>
+        <y>232</y>
+        <width>60</width>
         <height>16</height>
        </rect>
       </property>
       <property name="text">
-       <string>Dlib Model:</string>
+       <string>SELECT EB:</string>
       </property>
      </widget>
      <widget class="QLineEdit" name="port">
       <property name="geometry">
        <rect>
-        <x>147</x>
-        <y>42</y>
+        <x>141</x>
+        <y>24</y>
         <width>133</width>
         <height>20</height>
        </rect>
@@ -204,11 +204,89 @@
      <widget class="QLineEdit" name="interval">
       <property name="geometry">
        <rect>
-        <x>147</x>
-        <y>68</y>
+        <x>141</x>
+        <y>50</y>
         <width>133</width>
         <height>20</height>
        </rect>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="DlibModel">
+      <property name="geometry">
+       <rect>
+        <x>141</x>
+        <y>258</y>
+        <width>133</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="intervalInfo_7">
+      <property name="geometry">
+       <rect>
+        <x>27</x>
+        <y>258</y>
+        <width>66</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Dlib Model:</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="G8MKeyIndexes">
+      <property name="geometry">
+       <rect>
+        <x>141</x>
+        <y>154</y>
+        <width>133</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="intervalInfo_8">
+      <property name="geometry">
+       <rect>
+        <x>27</x>
+        <y>154</y>
+        <width>96</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>G8M Key Indexes:</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="intervalInfo_9">
+      <property name="geometry">
+       <rect>
+        <x>27</x>
+        <y>102</y>
+        <width>60</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>G8M Model:</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="G8MModel">
+      <property name="geometry">
+       <rect>
+        <x>141</x>
+        <y>102</y>
+        <width>133</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
       </property>
      </widget>
     </widget>
@@ -216,7 +294,7 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>270</y>
+       <y>320</y>
        <width>381</width>
        <height>111</height>
       </rect>
@@ -282,7 +360,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>460</y>
+     <y>480</y>
      <width>381</width>
      <height>25</height>
     </rect>

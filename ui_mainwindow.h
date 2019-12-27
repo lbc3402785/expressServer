@@ -20,6 +20,7 @@
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QPushButton>
+#include <QtWidgets/QSlider>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QTextBrowser>
 #include <QtWidgets/QToolBar>
@@ -31,19 +32,23 @@ class Ui_MainWindow
 {
 public:
     QAction *settings;
+    QAction *actionBFM;
+    QAction *actionG8M;
     QWidget *centralWidget;
     QGridLayout *gridLayout_4;
     QGridLayout *gridLayout;
-    QGraphicsView *imageView;
     QLabel *label;
-    QPushButton *start;
-    QComboBox *id;
-    QPushButton *stop;
-    QPushButton *open;
-    QPushButton *pause;
     QTextBrowser *textBrowser;
+    QGraphicsView *imageView;
+    QPushButton *stop;
+    QPushButton *pause;
+    QPushButton *start;
+    QPushButton *open;
+    QComboBox *id;
+    QSlider *horizontalSlider;
     QMenuBar *menuBar;
     QMenu *file;
+    QMenu *menu;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
 
@@ -57,6 +62,12 @@ public:
         QIcon icon;
         icon.addFile(QString::fromUtf8(":/iconImage/img/settings.png"), QSize(), QIcon::Normal, QIcon::Off);
         settings->setIcon(icon);
+        actionBFM = new QAction(MainWindow);
+        actionBFM->setObjectName(QString::fromUtf8("actionBFM"));
+        actionBFM->setCheckable(true);
+        actionG8M = new QAction(MainWindow);
+        actionG8M->setObjectName(QString::fromUtf8("actionG8M"));
+        actionG8M->setCheckable(true);
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
         gridLayout_4 = new QGridLayout(centralWidget);
@@ -66,46 +77,54 @@ public:
         gridLayout = new QGridLayout();
         gridLayout->setSpacing(6);
         gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
-        imageView = new QGraphicsView(centralWidget);
-        imageView->setObjectName(QString::fromUtf8("imageView"));
-
-        gridLayout->addWidget(imageView, 1, 0, 1, 3);
-
         label = new QLabel(centralWidget);
         label->setObjectName(QString::fromUtf8("label"));
         label->setAlignment(Qt::AlignCenter);
 
         gridLayout->addWidget(label, 0, 0, 1, 1);
 
-        start = new QPushButton(centralWidget);
-        start->setObjectName(QString::fromUtf8("start"));
+        textBrowser = new QTextBrowser(centralWidget);
+        textBrowser->setObjectName(QString::fromUtf8("textBrowser"));
 
-        gridLayout->addWidget(start, 2, 0, 1, 1);
+        gridLayout->addWidget(textBrowser, 4, 0, 1, 3);
 
-        id = new QComboBox(centralWidget);
-        id->setObjectName(QString::fromUtf8("id"));
+        imageView = new QGraphicsView(centralWidget);
+        imageView->setObjectName(QString::fromUtf8("imageView"));
 
-        gridLayout->addWidget(id, 0, 1, 1, 1);
+        gridLayout->addWidget(imageView, 1, 0, 1, 3);
 
         stop = new QPushButton(centralWidget);
         stop->setObjectName(QString::fromUtf8("stop"));
 
         gridLayout->addWidget(stop, 2, 2, 1, 1);
 
-        open = new QPushButton(centralWidget);
-        open->setObjectName(QString::fromUtf8("open"));
-
-        gridLayout->addWidget(open, 0, 2, 1, 1);
-
         pause = new QPushButton(centralWidget);
         pause->setObjectName(QString::fromUtf8("pause"));
 
         gridLayout->addWidget(pause, 2, 1, 1, 1);
 
-        textBrowser = new QTextBrowser(centralWidget);
-        textBrowser->setObjectName(QString::fromUtf8("textBrowser"));
+        start = new QPushButton(centralWidget);
+        start->setObjectName(QString::fromUtf8("start"));
 
-        gridLayout->addWidget(textBrowser, 3, 0, 1, 3);
+        gridLayout->addWidget(start, 2, 0, 1, 1);
+
+        open = new QPushButton(centralWidget);
+        open->setObjectName(QString::fromUtf8("open"));
+
+        gridLayout->addWidget(open, 0, 2, 1, 1);
+
+        id = new QComboBox(centralWidget);
+        id->setObjectName(QString::fromUtf8("id"));
+
+        gridLayout->addWidget(id, 0, 1, 1, 1);
+
+        horizontalSlider = new QSlider(centralWidget);
+        horizontalSlider->setObjectName(QString::fromUtf8("horizontalSlider"));
+        horizontalSlider->setMinimum(1);
+        horizontalSlider->setMaximum(999);
+        horizontalSlider->setOrientation(Qt::Horizontal);
+
+        gridLayout->addWidget(horizontalSlider, 3, 0, 1, 3);
 
         gridLayout->setRowStretch(0, 1);
         gridLayout->setRowStretch(1, 6);
@@ -120,6 +139,8 @@ public:
         menuBar->setGeometry(QRect(0, 0, 1070, 23));
         file = new QMenu(menuBar);
         file->setObjectName(QString::fromUtf8("file"));
+        menu = new QMenu(menuBar);
+        menu->setObjectName(QString::fromUtf8("menu"));
         MainWindow->setMenuBar(menuBar);
         mainToolBar = new QToolBar(MainWindow);
         mainToolBar->setObjectName(QString::fromUtf8("mainToolBar"));
@@ -129,7 +150,10 @@ public:
         MainWindow->setStatusBar(statusBar);
 
         menuBar->addAction(file->menuAction());
+        menuBar->addAction(menu->menuAction());
         file->addAction(settings);
+        menu->addAction(actionBFM);
+        menu->addAction(actionG8M);
 
         retranslateUi(MainWindow);
 
@@ -140,12 +164,15 @@ public:
     {
         MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "MainWindow", nullptr));
         settings->setText(QCoreApplication::translate("MainWindow", "\350\256\276\347\275\256", nullptr));
+        actionBFM->setText(QCoreApplication::translate("MainWindow", "BFM", nullptr));
+        actionG8M->setText(QCoreApplication::translate("MainWindow", "G8M", nullptr));
         label->setText(QCoreApplication::translate("MainWindow", "camera id:", nullptr));
-        start->setText(QCoreApplication::translate("MainWindow", "start", nullptr));
         stop->setText(QCoreApplication::translate("MainWindow", "stop", nullptr));
-        open->setText(QCoreApplication::translate("MainWindow", "open", nullptr));
         pause->setText(QCoreApplication::translate("MainWindow", "pause", nullptr));
+        start->setText(QCoreApplication::translate("MainWindow", "start", nullptr));
+        open->setText(QCoreApplication::translate("MainWindow", "open", nullptr));
         file->setTitle(QCoreApplication::translate("MainWindow", "\346\226\207\344\273\266", nullptr));
+        menu->setTitle(QCoreApplication::translate("MainWindow", "\345\217\221\351\200\201\346\250\241\345\274\217", nullptr));
     } // retranslateUi
 
 };

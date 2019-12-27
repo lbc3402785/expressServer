@@ -38,15 +38,27 @@ public:
     QString getBFMKeyIndexes() const;
     void setBFMKeyIndexes(const QString &value);
     ThreadSynGlobalObj obj;
+    QString getSelectEB() const;
+    void setSelectEB(const QString &value);
+
+    QString getG8MKeyIndexes() const;
+    void setG8MKeyIndexes(const QString &value);
+
+    QString getG8MModel() const;
+    void setG8MModel(const QString &value);
+
 private:
     Settings();
     void loadSettings();
     QString getDefaultOutputDir();
     QString getDefaultDlibModelPath();
     QString getDefaultBFMModelPath();
+    QString getDefaultG8MModelPath();
     QString getDefaultG8M2BFMPath();
     QString getDefaultBFM2G8MPath();
+    QString getDefaultSelectEBPath();
     QString getDefaultBFMKeyIndexesPath();
+    QString getDefaultG8MKeyIndexesPath();
     int getDefaultPort();
     int getDefaultInterval();
     int getDefaultWidth();
@@ -58,8 +70,11 @@ private:
     QString G8M2BFM;
     QString BFM2G8M;
     QString BFMModel;
+    QString G8MModel;
+    QString SelectEB;
     QString DlibModel;
     QString BFMKeyIndexes;
+    QString G8MKeyIndexes;
     QString outputDir;
 
 };

@@ -16,9 +16,12 @@ void Settings::loadSettings()
     height=settings.value("height", getDefaultHeight()).toInt();
     G8M2BFM=settings.value("G8M2BFM", getDefaultG8M2BFMPath()).toString();
     BFM2G8M=settings.value("BFM2G8M", getDefaultBFM2G8MPath()).toString();
+    SelectEB=settings.value("SelectEB", getDefaultSelectEBPath()).toString();
     BFMModel=settings.value("BFMModel", getDefaultBFMModelPath()).toString();
+    G8MModel=settings.value("G8MModel", getDefaultG8MModelPath()).toString();
     DlibModel=settings.value("DlibModel", getDefaultDlibModelPath()).toString();
     BFMKeyIndexes=settings.value("BFMKeyIndexes", getDefaultBFMKeyIndexesPath()).toString();
+    G8MKeyIndexes=settings.value("G8MKeyIndexes", getDefaultG8MKeyIndexesPath()).toString();
     outputDir=settings.value("outputDir", getDefaultOutputDir()).toString();
 }
 
@@ -38,19 +41,34 @@ QString Settings::getDefaultBFMModelPath()
     return "E:\\model\\BFMUV.obj.npz";
 }
 
+QString Settings::getDefaultG8MModelPath()
+{
+    return "E:\\model\\output_male\\G8M_BlendShapes.npz";
+}
+
 QString Settings::getDefaultG8M2BFMPath()
 {
-    return "E:\\model\\output_male\\G8M_BFM_EXPRESS.npz";
+    return "E:\\model\\output_male\\BFM_G8M_EXPRESS.npz";
 }
 
 QString Settings::getDefaultBFM2G8MPath()
 {
-    return "E:\\model\\output_male\\BFM_G8M_EXPRESS.npz";
+    return "E:\\model\\output_male\\G8M_BFM_EXPRESS.npz";
+}
+
+QString Settings::getDefaultSelectEBPath()
+{
+    return "E:\\model\\output_male\\BSelect.npz";
 }
 
 QString Settings::getDefaultBFMKeyIndexesPath()
 {
     return "E:\\model\\BFM.ini";
+}
+
+QString Settings::getDefaultG8MKeyIndexesPath()
+{
+    return "E:\\model\\g8MExpress.ini";
 }
 
 int Settings::getDefaultPort()
@@ -71,6 +89,36 @@ int Settings::getDefaultWidth()
 int Settings::getDefaultHeight()
 {
     return 1080;
+}
+
+QString Settings::getG8MModel() const
+{
+    return G8MModel;
+}
+
+void Settings::setG8MModel(const QString &value)
+{
+    G8MModel = value;
+}
+
+QString Settings::getG8MKeyIndexes() const
+{
+    return G8MKeyIndexes;
+}
+
+void Settings::setG8MKeyIndexes(const QString &value)
+{
+    G8MKeyIndexes = value;
+}
+
+QString Settings::getSelectEB() const
+{
+    return SelectEB;
+}
+
+void Settings::setSelectEB(const QString &value)
+{
+    SelectEB = value;
 }
 
 QString Settings::getBFMKeyIndexes() const
@@ -182,9 +230,12 @@ void Settings::saveSettings()
     settings.setValue("height", height);
     settings.setValue("G8M2BFM", G8M2BFM);
     settings.setValue("BFM2G8M", BFM2G8M);
+    settings.setValue("SelectEB", SelectEB);
     settings.setValue("BFMModel", BFMModel);
+    settings.setValue("G8MModel", G8MModel);
     settings.setValue("DlibModel", DlibModel);
     settings.setValue("BFMKeyIndexes", BFMKeyIndexes);
+    settings.setValue("G8MKeyIndexes", G8MKeyIndexes);
     settings.sync();
 }
 
@@ -197,8 +248,11 @@ void Settings::reset()
     G8M2BFM=getDefaultG8M2BFMPath();
     BFM2G8M=getDefaultBFM2G8MPath();
     BFMModel=getDefaultBFMModelPath();
+    G8MModel=getDefaultG8MModelPath();
+    SelectEB=getDefaultSelectEBPath();
     DlibModel=getDefaultDlibModelPath();
     BFMKeyIndexes=getDefaultBFMKeyIndexesPath();
+    G8MKeyIndexes=getDefaultG8MKeyIndexesPath();
     outputDir=getDefaultOutputDir();
 }
 

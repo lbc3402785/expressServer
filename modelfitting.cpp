@@ -26,11 +26,17 @@ void ModelFitting::loadKeyIndex(std::string keyPath,std::vector<int>& keys){
     }
 
 }
-void ModelFitting::extractKeyModel(const FaceModel &BFMModel, std::vector<int> &indexes, FaceModel &keyModel)
+void ModelFitting::extractBFMKeyModel(const FaceModel &BFMModel, std::vector<int> &indexes, FaceModel &keyModel)
 {
-   extractKeyShape(BFMModel.SB,indexes,keyModel.SB);
-   extractKeyShape(BFMModel.EB,indexes,keyModel.EB);
-   extractKeyFace(BFMModel.Face,indexes,keyModel.Face);
+    extractKeyShape(BFMModel.SB,indexes,keyModel.SB);
+    extractKeyShape(BFMModel.EB,indexes,keyModel.EB);
+    extractKeyFace(BFMModel.Face,indexes,keyModel.Face);
+}
+
+void ModelFitting::extractG8MKeyModel(const FaceModel &BFMModel, std::vector<int> &indexes, FaceModel &keyModel)
+{
+    extractKeyShape(BFMModel.EB,indexes,keyModel.EB);
+    extractKeyFace(BFMModel.Face,indexes,keyModel.Face);
 }
 
 void ModelFitting::extractKeyShape(const MatF &SB, std::vector<int> &indexes, MatF &keySB)
@@ -178,26 +184,28 @@ void ModelFitting::subKey(const std::map<int,int>& keyMap, std::vector<int> &ids
     }
 }
 
-void ModelFitting::fittingShape(const MatF&KP,MMSolver& solver)
+void ModelFitting::fittingShape(const MatF&KP,MMSolver& solver,bool center)
 {
-    solver.Solve(KP);
+    solver.Solve(KP,center);
 }
 
-void ModelFitting::fittingExpression(const MatF &KP, MMSolver &solver)
+void ModelFitting::fittingExpression(const MatF &KP, MMSolver &solver,bool center)
 {
-    std::cout<<"2--1"<<std::endl<<std::flush;
-    solver.params = solver.SolveProjection(KP, solver.FM.Face);
-    std::cout<<"2--2"<<std::endl<<std::flush;
+    MatF Face=solver.FM.Face;
     MatF S = solver.FM.Face * 0;
     MatF E = solver.FM.Face * 0;
-    std::cout<<"2--3"<<std::endl<<std::flush;
-    MatF FaceS = solver.FM.SB * solver.SX;
-    std::cout<<"2--4"<<std::endl<<std::flush;
-    S = Reshape(FaceS, 3);
-    std::cout<<"2--5"<<std::endl<<std::flush;
-    solver.EX = solver.SolveShape(solver.params, KP, solver.FM.Face + S, solver.FM.EB, Lambdas[2] * 1);
-    std::cout<<"2--6"<<std::endl<<std::flush;
+    for(int i=0;i<4;i++){
+
+            solver.params = solver.SolveProjection(KP, Face);
+        MatF FaceS = solver.FM.SB * solver.SX;
+        S = Reshape(FaceS, 3);
+        solver.EX = solver.SolveShape(solver.params, KP, solver.FM.Face + S, solver.FM.EB, Lambdas[2] * 1,center);
+        MatF FaceE = solver.FM.EB * solver.EX;
+        E = Reshape(FaceE, 3);
+        Face = solver.FM.Face + S + E;
+    }
 }
+
 
 void saveSelectObj(std::map<int,int> pointsMap,std::map<int,int> keyMap,Eigen::Matrix3Xf srcPoints,std::string name){
     std::ofstream out(name);

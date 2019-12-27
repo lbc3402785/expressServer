@@ -79,7 +79,6 @@ public:
         }
         std::shared_ptr<T> t_ptr = std::make_shared<T>(queue_.front());
         queue_.pop();
-
         return t_ptr;
     }
 

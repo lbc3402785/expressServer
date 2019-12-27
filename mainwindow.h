@@ -7,7 +7,7 @@
 #include <QCloseEvent>
 #include<QTimer>
 #include "thread/cameraworkthread.h"
-//#include "src/MMSolver.h"
+#include "src/MMSolver.h"
 #include "src/Dlib.h"
 #include "thread/udpworkthread.h"
 namespace Ui {
@@ -29,6 +29,8 @@ private:
     Ui::MainWindow *ui;
     QGraphicsScene* scene;
     std::shared_ptr<MMSolver> solverPtr;
+    std::shared_ptr<MMSolver> g8mSolverPtr;
+    bool center;
     bool started;
     bool hasShape;
     bool first;
@@ -54,6 +56,10 @@ private slots:
     void on_pause_clicked();
 
     void on_stop_clicked();
+
+    void on_actionBFM_triggered();
+
+    void on_actionG8M_triggered();
 
 protected:
     void closeEvent(QCloseEvent *event);
