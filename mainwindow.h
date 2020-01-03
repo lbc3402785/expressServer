@@ -61,6 +61,10 @@ private slots:
 
     void on_actionG8M_triggered();
 
+    void on_actionLocal_triggered();
+
+    void on_actionUnity_triggered();
+    void setRate(int);
 protected:
     void closeEvent(QCloseEvent *event);
 };

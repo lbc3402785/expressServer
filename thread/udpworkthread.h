@@ -26,6 +26,9 @@ public:
     bool getCenter() const;
     void setCenter(bool value);
 
+    bool getSendToLocal() const;
+    void setSendToLocal(bool value);
+
 private  slots:
     void setLambda(int value);
 
@@ -33,6 +36,7 @@ private:
     std::shared_ptr<ThreadSafeQueue<MatF>> sendQueue;
     QUdpSocket mUdpSock;
     bool started;
+    bool sendToLocal;
     bool pause;
     int interval;
     bool first;

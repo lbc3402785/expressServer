@@ -34,6 +34,8 @@ public:
     QAction *settings;
     QAction *actionBFM;
     QAction *actionG8M;
+    QAction *actionLocal;
+    QAction *actionUnity;
     QWidget *centralWidget;
     QGridLayout *gridLayout_4;
     QGridLayout *gridLayout;
@@ -49,6 +51,7 @@ public:
     QMenuBar *menuBar;
     QMenu *file;
     QMenu *menu;
+    QMenu *menu_2;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
 
@@ -68,6 +71,12 @@ public:
         actionG8M = new QAction(MainWindow);
         actionG8M->setObjectName(QString::fromUtf8("actionG8M"));
         actionG8M->setCheckable(true);
+        actionLocal = new QAction(MainWindow);
+        actionLocal->setObjectName(QString::fromUtf8("actionLocal"));
+        actionLocal->setCheckable(true);
+        actionUnity = new QAction(MainWindow);
+        actionUnity->setObjectName(QString::fromUtf8("actionUnity"));
+        actionUnity->setCheckable(true);
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
         gridLayout_4 = new QGridLayout(centralWidget);
@@ -121,7 +130,7 @@ public:
         horizontalSlider = new QSlider(centralWidget);
         horizontalSlider->setObjectName(QString::fromUtf8("horizontalSlider"));
         horizontalSlider->setMinimum(1);
-        horizontalSlider->setMaximum(999);
+        horizontalSlider->setMaximum(99);
         horizontalSlider->setOrientation(Qt::Horizontal);
 
         gridLayout->addWidget(horizontalSlider, 3, 0, 1, 3);
@@ -136,11 +145,13 @@ public:
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 1070, 23));
+        menuBar->setGeometry(QRect(0, 0, 1070, 21));
         file = new QMenu(menuBar);
         file->setObjectName(QString::fromUtf8("file"));
         menu = new QMenu(menuBar);
         menu->setObjectName(QString::fromUtf8("menu"));
+        menu_2 = new QMenu(menuBar);
+        menu_2->setObjectName(QString::fromUtf8("menu_2"));
         MainWindow->setMenuBar(menuBar);
         mainToolBar = new QToolBar(MainWindow);
         mainToolBar->setObjectName(QString::fromUtf8("mainToolBar"));
@@ -151,9 +162,12 @@ public:
 
         menuBar->addAction(file->menuAction());
         menuBar->addAction(menu->menuAction());
+        menuBar->addAction(menu_2->menuAction());
         file->addAction(settings);
         menu->addAction(actionBFM);
         menu->addAction(actionG8M);
+        menu_2->addAction(actionLocal);
+        menu_2->addAction(actionUnity);
 
         retranslateUi(MainWindow);
 
@@ -166,6 +180,8 @@ public:
         settings->setText(QCoreApplication::translate("MainWindow", "\350\256\276\347\275\256", nullptr));
         actionBFM->setText(QCoreApplication::translate("MainWindow", "BFM", nullptr));
         actionG8M->setText(QCoreApplication::translate("MainWindow", "G8M", nullptr));
+        actionLocal->setText(QCoreApplication::translate("MainWindow", "\346\234\254\345\234\260", nullptr));
+        actionUnity->setText(QCoreApplication::translate("MainWindow", "unity", nullptr));
         label->setText(QCoreApplication::translate("MainWindow", "camera id:", nullptr));
         stop->setText(QCoreApplication::translate("MainWindow", "stop", nullptr));
         pause->setText(QCoreApplication::translate("MainWindow", "pause", nullptr));
@@ -173,6 +189,7 @@ public:
         open->setText(QCoreApplication::translate("MainWindow", "open", nullptr));
         file->setTitle(QCoreApplication::translate("MainWindow", "\346\226\207\344\273\266", nullptr));
         menu->setTitle(QCoreApplication::translate("MainWindow", "\345\217\221\351\200\201\346\250\241\345\274\217", nullptr));
+        menu_2->setTitle(QCoreApplication::translate("MainWindow", "\346\216\245\346\224\266\347\253\257", nullptr));
     } // retranslateUi
 
 };

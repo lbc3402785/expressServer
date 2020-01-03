@@ -101,7 +101,7 @@ MainWindow::MainWindow(QWidget *parent) :
     std::cout << "load BFM done!" << std::endl<<std::flush;
 
     FaceModel shape;
-    shape.Initialize(sets.getG8MModel().toStdString(),true);
+    shape.InitializeG8M(sets.getG8MModel().toStdString(),true);
     FaceModel keyShape;
     std::vector<int> g8Mkeys;
     fitting::ModelFitting::loadKeyIndex(sets.getG8MKeyIndexes().toStdString(),g8Mkeys);
@@ -109,12 +109,19 @@ MainWindow::MainWindow(QWidget *parent) :
     MMSolver g8mSolver;
     g8mSolver.FM=keyShape;
     g8mSolver.FMFull=shape;
+    g8mSolver.FixShape=true;
+    g8mSolver.SX0.resize(g8mSolver.FMFull.SB.cols(),1);
+    g8mSolver.SX0.setZero();
+    g8mSolver.SX=g8mSolver.SX0;
     g8mSolverPtr=std::make_shared<MMSolver>(g8mSolver);
     std::cout << "load G8M done!" << std::endl<<std::flush;
     sendThread=nullptr;
     workThread=nullptr;
     ui->actionBFM->setChecked(true);
-    center=true;
+    ui->actionLocal->setChecked(true);
+    center=false;
+    connect(ui->horizontalSlider, SIGNAL(valueChanged(int)),
+            this, SLOT(setRate(int)));
 }
 
 MainWindow::~MainWindow()
@@ -284,4 +291,28 @@ void MainWindow::on_actionG8M_triggered()
     if(sendThread){
         sendThread->setSendMode(UdpWorkThread::SendMode::G8M);
     }
+}
+
+void MainWindow::on_actionLocal_triggered()
+{
+    ui->actionLocal->setChecked(true);
+    ui->actionUnity->setChecked(false);
+    if(sendThread){
+        sendThread->setSendToLocal(true);
+    }
+}
+
+void MainWindow::on_actionUnity_triggered()
+{
+    ui->actionLocal->setChecked(false);
+    ui->actionUnity->setChecked(true);
+    if(sendThread){
+        sendThread->setSendToLocal(false);
+    }
+}
+
+void MainWindow::setRate(int value)
+{
+    float rate=value/ui->horizontalSlider->maximum();
+    g8mSolverPtr->rate=rate;
 }

@@ -70,7 +70,7 @@
          <number>1</number>
         </property>
         <property name="maximum">
-         <number>999</number>
+         <number>99</number>
         </property>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -87,7 +87,7 @@
      <x>0</x>
      <y>0</y>
      <width>1070</width>
-     <height>23</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="file">
@@ -103,8 +103,16 @@
     <addaction name="actionBFM"/>
     <addaction name="actionG8M"/>
    </widget>
+   <widget class="QMenu" name="menu_2">
+    <property name="title">
+     <string>接收端</string>
+    </property>
+    <addaction name="actionLocal"/>
+    <addaction name="actionUnity"/>
+   </widget>
    <addaction name="file"/>
    <addaction name="menu"/>
+   <addaction name="menu_2"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -138,6 +146,22 @@
    </property>
    <property name="text">
     <string>G8M</string>
+   </property>
+  </action>
+  <action name="actionLocal">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>本地</string>
+   </property>
+  </action>
+  <action name="actionUnity">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>unity</string>
    </property>
   </action>
  </widget>

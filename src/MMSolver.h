@@ -37,9 +37,6 @@ inline Eigen::Matrix3f Orthogonalize(MatF R)
     Eigen::Matrix3f U = svd.matrixU();
     const Eigen::Matrix3f V = svd.matrixV();
     Eigen::Matrix3f R_ortho = U * V.transpose();
-    //	std::cout<<"R:" << R << std::endl;
-    //	std::cout << "U:" << U << std::endl;
-    //	std::cout << "V:" << V << std::endl;
     // The determinant of R must be 1 for it to be a valid rotation matrix
     if (R_ortho.determinant() < 0)
     {
@@ -67,9 +64,221 @@ inline Eigen::VectorXf SolveLinear(MatF A, MatF B)
     Eigen::VectorXf X = A.colPivHouseholderQr().solve(B);
     return X;
 }
+inline double ObstacleMethodLoss(MatD A,MatD b,Eigen::VectorXd x,double lambda,double t=2.0f)
+{
+    double l1=((A*x-b).transpose()*(A*x-b))(0,0);
+    int n=A.cols();
+    double l21=0;
+    double l22=0;
+    for(int i=0;i<n;i++){
+        double xi=x(i,0);
+        if(std::abs(xi-lambda)>1e-8){
+            l21-=std::log(std::abs(xi-lambda));
+        }else{
+            l21+=8;
+        }
 
+        if(std::abs(xi+lambda)>1e-8){
+            l22-=std::log(std::abs(xi+lambda));
+        }else{
+            l22+=8;
+        }
+    }
+    double result=l1+(1/t)*(l21+l22);
+    return result;
+}
+inline MatD JacobiOfObstacleMethod(MatD A,MatD b,Eigen::VectorXd x,double lambda,double t){
+    int n=x.rows();
+    MatD J=2*A.transpose()*A*x-2*A.transpose()*b;
+    //todo
+    for(int i=0;i<n;i++){
+        double xi=x(i,0);
+        double temp=lambda*lambda-xi*xi;
+        if(std::abs(temp)>1e-8){
+            J(i)+=(1/t)*(2*xi/temp);
+        }else{
+            J(i)+=(1/t)*(2*xi*1e8);
+        }
+    }
+    //
+    return J;
+}
+inline MatD JacobiOfDualInnerMethod(MatD A,MatD b,Eigen::VectorXd x,Eigen::VectorXd v,double lambda,double t){
+    int n=x.rows();
+    MatD I=MatD::Identity(n,n);
+    MatD J=2*I*x+A.transpose()*v;
+    //todo
+    for(int i=0;i<n;i++){
+        Eigen::VectorXd vi(n);
+        vi.setZero();
+        vi(i,0)=1;
+        double xi=x(i,0);
+        double temp=lambda*lambda-xi*xi;
+        if(std::abs(temp)>1e-8){
+            J+=(1/t)*(2*xi/temp)*vi;
+        }else{
+            J+=(1/t)*(2*xi*1e8)*vi;
+        }
+    }
+    //
+    return J;
+}
 
+inline MatD HessionOfObstacleMethod(MatD A,MatD b,Eigen::VectorXd x,double lambda,double t){
+    int n=x.rows();
+    MatD H=A.transpose()*A;
+    for(int i=0;i<n;i++){
+        double xi=x(i,0);
+        if(std::abs(xi-lambda)>1e-8){
+            H(i,i)+=1/(t*(lambda-xi)*(lambda-xi));
+        }else{
+            H(i,i)+=(1/t)*1e16;
+        }
+        if(std::abs(xi+lambda)>1e-8){
+            H(i,i)+=1/(t*(lambda+xi)*(lambda+xi));
+        }else{
+            H(i,i)+=(1/t)*1e16;
+        }
+    }
+    return H;
+}
+inline MatD HessionOfDualInnerMethod(MatD A,MatD b,Eigen::VectorXd x,Eigen::VectorXd l,double r,double t){
+    int n=x.rows();
+    MatD I=MatD::Identity(n,n);
+    MatD H=2*I;
+    cout << "x:" << endl << x << endl;
+    for(int i=0;i<n;i++){
+        double xi=x(i,0);
+        double li=l(i,0);
+        if(std::abs(xi-r)>1e-8){
+            H(i,i)+=li/(t*(r-xi));
+        }else{
+            H(i,i)+=1e8*li/t;
+        }
+        if(std::abs(xi+r)>1e-8){
+            H(i,i)+=li/(t*(r+xi));
+        }else{
+            H(i,i)+=1e8*li/t;
+        }
+    }
+    return H;
+}
+inline double BacktrackingStraightSearch(double (*func)(MatD A,MatD b,Eigen::VectorXd x,double lambda,double t),MatD A,MatD b, MatD G,Eigen::VectorXd x,Eigen::VectorXd deta_x,double lambda,double t,double alpha=0.4,double beta=0.88f)
+{
+    double t_step=1.0f;
 
+    double loss=func(A,b,x,lambda,t);
+    //cout << "loss:" << endl << loss << endl;
+    int iter=0;
+    while(true){
+        double loss2=(G.transpose()*deta_x)(0,0)*alpha*t_step;
+        double loss_t_deta_x=func(A,b,x+t_step*deta_x,lambda,t);
+        if(loss_t_deta_x<=(loss+loss2))break;
+        if(std::fabs(t_step)<1e-7)break;
+        t_step*=beta;
+        iter++;
+    }
+
+    return t_step;
+}
+inline double ensureX(Eigen::VectorXd x,Eigen::VectorXd deta_x,double lambda,double s)
+{
+    double r=s;
+    int n=x.rows();
+    Eigen::VectorXd v1(n);
+    v1.setOnes();
+    v1*=lambda;
+    Eigen::VectorXd lower=-v1-x;
+    Eigen::VectorXd upper=v1-x;
+    for(int i=0;i<n;i++){
+        double li=lower(i);
+        double ui=upper(i);
+        double dxi=deta_x(i);
+        if(dxi>0){
+            if(ui/dxi<r)r=ui/dxi;
+        }else{
+            if(li/dxi<r)r=li/dxi;
+        }
+    }
+    return r;
+}
+inline Eigen::VectorXd SolveNewTonForObstacleMethod(MatD A,MatD b,Eigen::VectorXd x0,double lambda,double t,double epison=1e-6)
+{
+    Eigen::VectorXd x=x0;
+    int iter=0;
+    while(true){
+        MatD H=HessionOfObstacleMethod(A,b,x,lambda,t);
+        MatD Hinverse=H.inverse();
+        MatD G=JacobiOfObstacleMethod(A,b,x,lambda,t);
+        Eigen::VectorXd deta_x=-Hinverse*G;
+        if(deta_x.norm()<1e-7)break;
+        MatD result=G.transpose()*Hinverse*G;
+        double err2=result(0,0);
+        if(err2/2<epison)break;
+        double step=BacktrackingStraightSearch(ObstacleMethodLoss,A,b,G,x,deta_x,lambda,t);
+        //step=ensureX(x,deta_x,lambda,step);
+        x+=step*deta_x;
+        iter++;
+        //cout<<iter << "x:" << endl << x << endl;
+    }
+    return x;
+}
+inline Eigen::VectorXd SolveObstacleMethod(MatD A,MatD b,double lambda,double t0,double mu=1.0f,double epison=1e-25){
+    int n=A.cols();
+    Eigen::VectorXd x0(n);
+    x0.setOnes();
+    x0*=0.1f;
+    Eigen::VectorXd x=x0;
+    double t=t0;
+    int iter=0;
+    while(true){
+        Eigen::VectorXd x_star=SolveNewTonForObstacleMethod(A,b,x,lambda,t,epison);
+        x=x_star;
+        if(n/t<epison)break;
+        t*=mu;
+        iter++;
+        if(iter>1e6)break;
+    }
+    return x;
+}
+inline double getEta(Eigen::VectorXd lambda,Eigen::VectorXd x,double r)
+{
+    int m=x.rows();
+    double eta=0;
+    for(int i=0;i<m;i++){
+        double xi=x(i,0);
+        double li=lambda(i,0);
+        double temp=r-xi;
+        eta+=temp*li;
+
+    }
+    for(int i=0;i<m;i++){
+        double xi=x(i,0);
+        double li=lambda(i+m,0);
+        double temp1=r+xi;
+        eta+=temp1*li;
+    }
+    return eta;
+}
+//inline Eigen::VectorXd SolveDualInnerMethod(MatD A,MatD b,double r,double mu=1.0f,double epison=1e-25){
+//    int n=A.cols();
+//    Eigen::VectorXd x0(n);
+//    x0.setOnes();
+//    x0*=0.1f;
+//    Eigen::VectorXd x=x0;
+//    Eigen::VectorXd v(n);
+//    v.setOnes();
+//    Eigen::VectorXd lambda(n*2);
+//    lambda.setOnes();
+//    while(true){
+////        //double eta=getEta(lambda,x);
+////        double t=mu*n/eta;
+////        MatD Hpd=HessionOfDualInnerMethod(A,b,x,l,r,t);
+////        MatD g=JacobiOfDualInnerMethod(A,b,x,v,r,t);
+////        Eigen::VectorXd r_pri=A*x-b;
+//    }
+//    return x;
+//}
 
 class ProjectionParameters
 {
@@ -109,6 +318,10 @@ public:
  */
 inline MatF Projection(ProjectionParameters p, MatF model_points)
 {
+    std::cout<<"p.R:"<<p.R<<std::endl<<std::flush;
+    std::cout<<"p.tx:"<<p.tx<<std::endl<<std::flush;
+    std::cout<<"p.ty:"<<p.ty<<std::endl<<std::flush;
+    std::cout<<"p.s:"<<p.s<<std::endl<<std::flush;
     MatF R = p.R.transpose() * p.s;
     R = R.block(0, 0, 3, 2);
 
@@ -175,7 +388,7 @@ public:
     MatI Ev;
 
     MatF UV;
-    MatF QUADRI;
+    MatI QUADRI;
     MatF Face;
     MatF GeneratedFace;
     Matrix<float, 1, Eigen::Dynamic> Mean;
@@ -188,19 +401,35 @@ public:
     {
 
     }
+    void InitializeG8M(string file, bool LoadEdge){
+        cnpy::npz_t npz = cnpy::npz_load(file);
+
+        SM = ToEigen(npz["SM"]);
+        //SB = ToEigen(npz["SB"]);
+
+        //EM = ToEigen(npz["EM"]);
+        EB = ToEigen(npz["EB"]);
+
+        MatF FaceFlat = SM /*+ EM*/; // 204 * 1
+        Face = Reshape(FaceFlat, 3);
+        QUADRI=ToEigenInt(npz["QUADRI"]);
+        /*Mean = GetMean(Face);
+        Face.rowwise() -= Mean; */
+        SB=EB;
+    }
     void Initialize(string file, bool LoadEdge)
     {
         cnpy::npz_t npz = cnpy::npz_load(file);
 
         SM = ToEigen(npz["SM"]);
-        SB = ToEigen(npz["SB"]);
+        //SB = ToEigen(npz["SB"]);
 
-        EM = ToEigen(npz["EM"]);
+        //EM = ToEigen(npz["EM"]);
         EB = ToEigen(npz["EB"]);
 
-        MatF FaceFlat = SM + EM; // 204 * 1
+        MatF FaceFlat = SM /*+ EM*/; // 204 * 1
         Face = Reshape(FaceFlat, 3);
-
+        //QUADRI=ToEigenInt(npz["QUADRI"]);
         /*Mean = GetMean(Face);
         Face.rowwise() -= Mean; */
 
@@ -249,7 +478,7 @@ public:
     //vector<int> SkipList = { 0, 1, 2, 3, 4,   5, 6, 7,    9,10,  11, 12,  13, 14, 15, 16 };
     vector<int> SkipList = {8};
 
-
+    float rate=1.0f;
     FaceModel FM;
     FaceModel FMFull;
     bool FIXFIRSTSHAPE = true;
@@ -325,6 +554,8 @@ public:
      * @return
      */
     ProjectionParameters SolveProjectionCenter(MatF image_points, MatF model_points){
+        Matrix<float, 1, Eigen::Dynamic> Mean = GetMean(model_points);
+        model_points.rowwise() -= Mean;
         using Eigen::Matrix;
         int N = image_points.rows();
         assert(image_points.rows() == model_points.rows());
@@ -375,12 +606,13 @@ public:
         float sTy = k(7);
         const auto s = (R1.norm() + R2.norm()) / 2.0f;
         Eigen::Matrix3f R_ortho = Orthogonalize(R);
-        const auto t1 = sTx / s;
-        const auto t2 = sTy / s;
+        MatF T = Mean * R_ortho.transpose();
+        // Remove the scale from the translations:
+        const auto t1 = sTx / s - T(0);
+        const auto t2 = sTy / s - T(1);
         float zc=1/R3.norm();
         float t3=k(11)/R3.norm();
         auto error = (A*k - b).norm();
-
         std::cout<<"error:"<<error<<std::endl<<std::flush;
         return ProjectionParameters{ R_ortho, t1, t2,t3, s };
     }
@@ -389,7 +621,7 @@ public:
         //########## Mean should be subtracted from model_points ############
 
         Matrix<float, 1, Eigen::Dynamic> Mean = GetMean(model_points);
-        //model_points.rowwise() -= Mean;
+        model_points.rowwise() -= Mean;
 
 
         using Eigen::Matrix;
@@ -445,18 +677,21 @@ public:
 
         const auto s = (R1.norm() + R2.norm()) / 2.0f;
 
-
+        std::cout << "R:" << R << std::endl;
         Eigen::Matrix3f R_ortho = Orthogonalize(R);
         std::cout << "R_ortho:" << R_ortho << std::endl;
-        MatF T = Mean * R_ortho;
+        MatF T = Mean * R_ortho.transpose();
         // Remove the scale from the translations:
-        const auto t1 = sTx / s /*- T(0)*/;
-        const auto t2 = sTy / s/* - T(1)*/;
+        const auto t1 = sTx / s - T(0);
+        const auto t2 = sTy / s - T(1);
 
         auto error = (A*k - b).norm();
-
+//        std::cout<<"R_ortho:"<<R_ortho<<std::endl<<std::flush;
+//        std::cout<<"t1:"<<t1<<std::endl<<std::flush;
+//        std::cout<<"t2:"<<t2<<std::endl<<std::flush;
+//        std::cout<<"s:"<<s<<std::endl<<std::flush;
         std::cout << "error:" << error << std::endl;
-        return ProjectionParameters{ R_ortho, t1, t2, s };
+        return ProjectionParameters{ R_ortho, t1, t2,0, s };
     }
 
     MatF SX;
@@ -494,7 +729,7 @@ public:
             }
             else
             {
-                SX = SolveShape(params, KP, FM.Face + E, FM.SB, Lambdas[i] * 5,center);
+                SX = SolveShape(params, KP, FM.Face + E, FM.SB, Lambdas[i],center);
                 if (FIXFIRSTSHAPE)
                 {
                     SX(0, 0) = 0;
@@ -503,8 +738,7 @@ public:
             MatF FaceS = FM.SB * SX;
             S = Reshape(FaceS, 3);
 
-            EX = SolveShape(params, KP, FM.Face + S, FM.EB, Lambdas[i] * 1,center);
-
+            EX = SolveShape(params, KP, FM.Face + S, FM.EB, Lambdas[i]*0.01f,center);
             MatF FaceE = FM.EB * EX;
             E = Reshape(FaceE, 3);
 
@@ -520,13 +754,15 @@ public:
 
 
 
-inline Mat MMSDraw(Mat orig, MMSolver &MMS, MatF &KP)
+inline Mat MMSDraw(Mat orig, MMSolver &MMS, MatF &KP,bool center=false)
 {
-    std::cout<<"11"<<std::endl<<std::flush;
     auto params = MMS.params;
     auto Face2 = MMS.FMFull.Generate(MMS.SX, MMS.EX);
     MatF projected = Projection(params, Face2);
-
+    if(center){
+        projected.col(0).array()+=orig.cols/2;
+        projected.col(1).array()+=orig.rows/2;
+    }
     auto image = orig.clone();
     auto image2 = orig.clone();
 
@@ -548,17 +784,19 @@ inline Mat MMSDraw(Mat orig, MMSolver &MMS, MatF &KP)
         //circle(image, Point(x, y), 1, Scalar(0, 0, 255), -1);
     }
 
-
     auto Face = MMS.FM.Generate(MMS.SX, MMS.EX);
-    projected = Projection(params, Face);
 
+    projected = Projection(params, Face);
+    if(center){
+        projected.col(0).array()+=orig.cols/2;
+        projected.col(1).array()+=orig.rows/2;
+    }
     for (size_t i = 0; i < projected.rows(); i++)
     {
         auto x = projected(i, 0);
         auto y = projected(i, 1);
         circle(image, Point(x, y), 2, Scalar(255, 0, 0, 255), -1, CV_AA);
     }
-
     if (MMS.USEWEIGHT)
     {
         for (size_t i = 0; i < MMS.SkipList.size(); i++)
@@ -569,7 +807,10 @@ inline Mat MMSDraw(Mat orig, MMSolver &MMS, MatF &KP)
             circle(image, Point(x, y), 6, Scalar(255, 0, 0, 255), 1, CV_AA);
         }
     }
-
+    if(center){
+        KP.col(0).array()+=orig.cols/2;
+        KP.col(1).array()+=orig.rows/2;
+    }
     for (size_t i = 0; i < KP.rows(); i++)
     {
         auto x = KP(i, 0);
@@ -577,7 +818,6 @@ inline Mat MMSDraw(Mat orig, MMSolver &MMS, MatF &KP)
 
         circle(image, Point(x, y), 2, Scalar(0, 255, 0, 255), -1, CV_AA);
     }
-
     //imshow("IMG", image / 2 + image2 / 2);
     return image / 2 + image2 / 2;
 }

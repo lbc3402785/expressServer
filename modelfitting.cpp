@@ -37,6 +37,7 @@ void ModelFitting::extractG8MKeyModel(const FaceModel &BFMModel, std::vector<int
 {
     extractKeyShape(BFMModel.EB,indexes,keyModel.EB);
     extractKeyFace(BFMModel.Face,indexes,keyModel.Face);
+    keyModel.SB=keyModel.EB;
 }
 
 void ModelFitting::extractKeyShape(const MatF &SB, std::vector<int> &indexes, MatF &keySB)
@@ -191,19 +192,23 @@ void ModelFitting::fittingShape(const MatF&KP,MMSolver& solver,bool center)
 
 void ModelFitting::fittingExpression(const MatF &KP, MMSolver &solver,bool center)
 {
-    MatF Face=solver.FM.Face;
-    MatF S = solver.FM.Face * 0;
-    MatF E = solver.FM.Face * 0;
-    for(int i=0;i<4;i++){
+//    MatF Face=solver.FM.Face;
+//    MatF S = solver.FM.Face * 0;
+//    MatF E = solver.FM.Face * 0;
+//    for(int i=0;i<4;i++){
 
-            solver.params = solver.SolveProjection(KP, Face);
-        MatF FaceS = solver.FM.SB * solver.SX;
-        S = Reshape(FaceS, 3);
-        solver.EX = solver.SolveShape(solver.params, KP, solver.FM.Face + S, solver.FM.EB, Lambdas[2] * 1,center);
-        MatF FaceE = solver.FM.EB * solver.EX;
-        E = Reshape(FaceE, 3);
-        Face = solver.FM.Face + S + E;
-    }
+//            solver.params = solver.SolveProjection(KP, Face);
+//        MatF FaceS = solver.FM.SB * solver.SX;
+//        S = Reshape(FaceS, 3);
+//        solver.EX = solver.SolveShape(solver.params, KP, solver.FM.Face + S, solver.FM.EB, Lambdas[2] * 1,center);
+//        MatF FaceE = solver.FM.EB * solver.EX;
+//        E = Reshape(FaceE, 3);
+//        Face = solver.FM.Face + S + E;
+//    }
+    solver.FixShape=true;
+    solver.SX0=solver.SX;
+    solver.Solve(KP,center);
+    solver.FixShape=false;
 }
 
 

@@ -20,6 +20,7 @@ UdpWorkThread::UdpWorkThread(std::shared_ptr<MMSolver> solverPtr,std::shared_ptr
     interval=sets.getInterval();
     mUdpSock.bind(1234, QUdpSocket::ShareAddress);
     sendMode=BFM;
+    sendToLocal=true;
 }
 
 bool UdpWorkThread::getPause() const
@@ -68,6 +69,16 @@ void UdpWorkThread::setLambda(int value)
     lambda = value;
 }
 
+bool UdpWorkThread::getSendToLocal() const
+{
+    return sendToLocal;
+}
+
+void UdpWorkThread::setSendToLocal(bool value)
+{
+    sendToLocal = value;
+}
+
 bool UdpWorkThread::getCenter() const
 {
     return center;
@@ -100,7 +111,17 @@ void UdpWorkThread::sendBroadcast()
             }else{
                 fitting::ModelFitting::fittingExpression(*KPPtr,*g8mSolverPtr,center);
                 std::cout<<"g8mSolverPtr->EX:"<<g8mSolverPtr->EX<<std::endl<<std::flush;
+                //g8mSolverPtr->EX*=100;
                 std::vector<float> g8Params(g8mSolverPtr->EX.data(),g8mSolverPtr->EX.data()+g8mSolverPtr->EX.rows());
+                if(!sendToLocal){
+                    float lambda=4.0f;
+                    if(g8Params[2]<0)g8Params[2]=0.0f;
+                    for(int i=0;i<g8Params.size();i++){
+                        g8Params[i]=(g8Params[i]+lambda)*(50/lambda);
+                        if(g8Params[i]>100)g8Params[i]=100;
+                        if(g8Params[i]<0)g8Params[i]=0;
+                    }
+                }
                 obj["G8M"]=toJson(g8Params);
             }
 
