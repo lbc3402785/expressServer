@@ -318,10 +318,6 @@ public:
  */
 inline MatF Projection(ProjectionParameters p, MatF model_points)
 {
-    std::cout<<"p.R:"<<p.R<<std::endl<<std::flush;
-    std::cout<<"p.tx:"<<p.tx<<std::endl<<std::flush;
-    std::cout<<"p.ty:"<<p.ty<<std::endl<<std::flush;
-    std::cout<<"p.s:"<<p.s<<std::endl<<std::flush;
     MatF R = p.R.transpose() * p.s;
     R = R.block(0, 0, 3, 2);
 
@@ -497,7 +493,7 @@ public:
         }
     }
 
-    MatF SolveShape(ProjectionParameters p, MatF image_points, MatF M, MatF SB, float lambda,bool center=false)
+    MatF SolveShape(ProjectionParameters p, MatF image_points, MatF M, MatF SB, float lambda,float& diff)
     {
         //cout << Shape(SB) << endl;
 
@@ -542,7 +538,7 @@ public:
 
         auto X = SolveLinear(SBX, error, lambda);
 
-        //cout << (error - SBX * X).norm() << endl;
+        diff= (error - SBX * X).norm();
 
         return X;
         //MatF rotated = (model_points + Ax) * R;
@@ -613,7 +609,7 @@ public:
         float zc=1/R3.norm();
         float t3=k(11)/R3.norm();
         auto error = (A*k - b).norm();
-        std::cout<<"error:"<<error<<std::endl<<std::flush;
+        //std::cout<<"error:"<<error<<std::endl<<std::flush;
         return ProjectionParameters{ R_ortho, t1, t2,t3, s };
     }
     ProjectionParameters SolveProjection(MatF image_points, MatF model_points)
@@ -676,10 +672,7 @@ public:
         //sTy += Mean(1);
 
         const auto s = (R1.norm() + R2.norm()) / 2.0f;
-
-        std::cout << "R:" << R << std::endl;
         Eigen::Matrix3f R_ortho = Orthogonalize(R);
-        std::cout << "R_ortho:" << R_ortho << std::endl;
         MatF T = Mean * R_ortho.transpose();
         // Remove the scale from the translations:
         const auto t1 = sTx / s - T(0);
@@ -690,7 +683,7 @@ public:
 //        std::cout<<"t1:"<<t1<<std::endl<<std::flush;
 //        std::cout<<"t2:"<<t2<<std::endl<<std::flush;
 //        std::cout<<"s:"<<s<<std::endl<<std::flush;
-        std::cout << "error:" << error << std::endl;
+        //std::cout << "error:" << error << std::endl;
         return ProjectionParameters{ R_ortho, t1, t2,0, s };
     }
 
@@ -704,7 +697,7 @@ public:
 
 
 
-    void Solve(MatF KP,bool center=false)
+    float Solve(MatF KP,bool center=false)
     {
         MatF Face = FM.Face;
         MatF S = Face * 0;
@@ -713,7 +706,7 @@ public:
 
         float Lambdas[7] = { 100.0, 30.0, 10.0, 5.0,4.0,3.0,2.0};
 
-
+        float error=0.0f;
         for (size_t i = 0; i < 4; i++)
         {
             if(center){
@@ -729,7 +722,7 @@ public:
             }
             else
             {
-                SX = SolveShape(params, KP, FM.Face + E, FM.SB, Lambdas[i],center);
+                SX = SolveShape(params, KP, FM.Face + E, FM.SB, Lambdas[i],error);
                 if (FIXFIRSTSHAPE)
                 {
                     SX(0, 0) = 0;
@@ -738,7 +731,7 @@ public:
             MatF FaceS = FM.SB * SX;
             S = Reshape(FaceS, 3);
 
-            EX = SolveShape(params, KP, FM.Face + S, FM.EB, Lambdas[i]*0.01f,center);
+            EX = SolveShape(params, KP, FM.Face + S, FM.EB, Lambdas[i]*0.1f,error);
             MatF FaceE = FM.EB * EX;
             E = Reshape(FaceE, 3);
 
@@ -746,7 +739,7 @@ public:
 
 
         }
-
+        return error;
     }
 };
 

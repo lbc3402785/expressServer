@@ -71,12 +71,14 @@ void Test::testG8M(std::string picPath)
         MMSolver g8mSolver;
         g8mSolver.FM=keyShape;
         g8mSolver.FMFull=shape;
-//        g8mSolver.Solve(KP,center);
-        g8mSolver.params=g8mSolver.SolveProjection(KP,g8mSolver.FM.Face);
+
+        //g8mSolver.params=g8mSolver.SolveProjection(KP,g8mSolver.FM.Face);
         g8mSolver.SX0.resize(g8mSolver.FMFull.SB.cols(),1);
         g8mSolver.SX0.setZero();
         g8mSolver.SX=g8mSolver.SX0;
         g8mSolver.EX=g8mSolver.SX0;
+        g8mSolver.FixShape=true;
+        g8mSolver.Solve(KP,center);
         std::cout<<"g8mSolver.EX:"<<g8mSolver.EX<<std::endl<<std::flush;
         MatF face=g8mSolver.FMFull.Generate(g8mSolver.SX,g8mSolver.EX);
         points=face.transpose();

@@ -27,7 +27,7 @@ public:
     static std::map<int,int> makeKeymap(std::vector<int> srcIndexes,std::vector<int> dstIndexes);
     static void subKey(const std::map<int,int>& keyMap,std::vector<int> &ids);
     static void fittingShape(const MatF&KP, MMSolver& solver,bool center=false);
-    static void fittingExpression(const MatF&KP, MMSolver& solver,bool center=false);
+    static float fittingExpression(const MatF&KP, MMSolver& solver,bool center=false);
 };
 }
 

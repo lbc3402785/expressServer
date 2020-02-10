@@ -109,13 +109,34 @@ void UdpWorkThread::sendBroadcast()
                 obj["expressX"]=toJson(expressParams);
                 std::cout<<"solverPtr->EX:"<<solverPtr->EX<<std::endl<<std::flush;
             }else{
+//                MatF EB=g8mSolverPtr->FM.EB;
+//                float error=10000.0f;
+//                float result=0.0f;
+//                int index=0;
+//                int cols=g8mSolverPtr->FM.EB.cols();
+//                for(int i=0;i<cols;i++){
+//                    g8mSolverPtr->FM.EB.resize(EB.rows(),1);
+//                    g8mSolverPtr->FM.EB=EB.col(i);
+//                    float erri=fitting::ModelFitting::fittingExpression(*KPPtr,*g8mSolverPtr,center);
+//                    MatF EXI=g8mSolverPtr->EX;
+//                    float cur=EXI(0,0);
+//                    if(erri<error){
+//                        result=cur;
+//                        index=i;
+//                        error=erri;
+//                    }
+//                }
+//                g8mSolverPtr->FM.EB=EB;
+//                MatF EX=MatF::Zero(cols,1);
+//                EX(index,0)=result;
+//                std::cout<<index<<":"<<result<<std::endl<<std::flush;
                 fitting::ModelFitting::fittingExpression(*KPPtr,*g8mSolverPtr,center);
                 std::cout<<"g8mSolverPtr->EX:"<<g8mSolverPtr->EX<<std::endl<<std::flush;
                 //g8mSolverPtr->EX*=100;
                 std::vector<float> g8Params(g8mSolverPtr->EX.data(),g8mSolverPtr->EX.data()+g8mSolverPtr->EX.rows());
                 if(!sendToLocal){
-                    float lambda=4.0f;
-                    if(g8Params[2]<0)g8Params[2]=0.0f;
+                    float lambda=2.5f;
+                    if(g8Params[3]<0)g8Params[3]=0.0f;
                     for(int i=0;i<g8Params.size();i++){
                         g8Params[i]=(g8Params[i]+lambda)*(50/lambda);
                         if(g8Params[i]>100)g8Params[i]=100;

@@ -190,7 +190,7 @@ void ModelFitting::fittingShape(const MatF&KP,MMSolver& solver,bool center)
     solver.Solve(KP,center);
 }
 
-void ModelFitting::fittingExpression(const MatF &KP, MMSolver &solver,bool center)
+float ModelFitting::fittingExpression(const MatF &KP, MMSolver &solver,bool center)
 {
 //    MatF Face=solver.FM.Face;
 //    MatF S = solver.FM.Face * 0;
@@ -207,8 +207,9 @@ void ModelFitting::fittingExpression(const MatF &KP, MMSolver &solver,bool cente
 //    }
     solver.FixShape=true;
     solver.SX0=solver.SX;
-    solver.Solve(KP,center);
+    float error=solver.Solve(KP,center);
     solver.FixShape=false;
+    return error;
 }
 
 
